@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.rabbit.annotation.*;
+import org.springframework.amqp.rabbit.listener.exception.FatalListenerStartupException;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.stereotype.Component;
@@ -19,22 +20,20 @@ public class consumer {
 
     @RabbitHandler
     @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(value = "queue-test", durable = "true",arguments = {
+            value = @Queue(value = "queue-test",arguments = {
                     @Argument(name = "x-dead-letter-exchange", value = "exchange.dead"),
                     @Argument(name = "x-dead-letter-routing-key", value = "key.dead")}),
-            exchange = @Exchange(value = "exchange-test",
-                    durable = Exchange.TRUE, type = ExchangeTypes.TOPIC,
-                    ignoreDeclarationExceptions = "true"),
+            exchange = @Exchange(value = "exchange-test", type = ExchangeTypes.TOPIC),
             key = "rountingKey-test")
     )
 
     public void receive(String message, @Headers Map<String, Object> properties, Channel channel) throws Exception {
 
         logger.info("consumer" + message);
-       Long deliveryTag = (Long) properties.get(AmqpHeaders.DELIVERY_TAG);
+ //      Long deliveryTag = (Long) properties.get(AmqpHeaders.DELIVERY_TAG);
 //        try {
-//           int i = 1/0; //异常
-         channel.basicAck(deliveryTag, false); //确认
+           int i = 1/0; //异常
+//         channel.basicNack(deliveryTag, false, false); //确认
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //            throw e;
@@ -46,8 +45,8 @@ public class consumer {
     @RabbitListener(
             bindings = @QueueBinding(
                     exchange = @Exchange(value = "exchange.dead"),
-                    value = @Queue(value = "queue.dead", durable = "true"),
-                    key = "#"
+                    value = @Queue(value = "queue.dead"),
+                    key = "key.dead"
             )
     )
     public void deadListener(@Headers Map<String, Object> headers, String msg) {

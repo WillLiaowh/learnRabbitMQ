@@ -44,6 +44,7 @@ public class ProducerController {
 //            }
 //        });
 
+ //       rabbitTemplate.convertAndSend(RabbitConfig.TOPIC_EXCHANGE, "BIND_KEY", "test");
         rabbitTemplate.convertAndSend("exchange-test","rountingKey-test",message);
 //        rabbitTemplate.convertAndSend("exchange-test","rountingKey-test",message, new MessagePostProcessor() {
 //            @Override

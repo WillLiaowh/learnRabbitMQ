@@ -19,10 +19,13 @@ public class consumer {
 
 
     @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(value = "queue-test",arguments = {
+            value = @Queue(value = "queue-test",durable = "true"
+                    ,arguments = {
                     @Argument(name = "x-dead-letter-exchange", value = "exchange-dead"),
-                    @Argument(name = "x-dead-letter-routing-key", value = "key-dead")}),
-            exchange = @Exchange(value = "exchange-test"),
+                    @Argument(name = "x-dead-letter-routing-key", value = "key-dead")}
+                    ),
+
+            exchange = @Exchange(value = "exchange-test",durable = "true",ignoreDeclarationExceptions = "true"),
             key = "rountingKey-test")
     )
     @RabbitHandler
@@ -32,11 +35,11 @@ public class consumer {
 
       Long deliveryTag = (Long) properties.get(AmqpHeaders.DELIVERY_TAG);
         try {
-          int i = 1/0; //异常
+            //int i = 1/0; //异常
             channel.basicAck(deliveryTag, false); //确认
         } catch (Exception e) {
             e.printStackTrace();
-            channel.basicReject(deliveryTag,true);//拒绝
+            channel.basicReject(deliveryTag,false);//拒绝
         }
     }
 

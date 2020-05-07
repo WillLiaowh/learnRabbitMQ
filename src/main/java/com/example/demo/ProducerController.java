@@ -22,38 +22,10 @@ public class ProducerController {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-//    @Autowired
-//    public ProducerController(RabbitTemplate rabbitTemplate){
-//        this.rabbitTemplate = rabbitTemplate;
-//        rabbitTemplate.setReturnCallback(new RabbitTemplate.ReturnCallback() {
-//            @Override
-//            public void returnedMessage(Message message, int i, String s, String s1, String s2) {
-//                logger.info("returnedMessage" + message);
-//            }
-//        });
-//    }
-
     @GetMapping("/publish")
     public void publish(){
         String message = "message from producer";
         logger.info("publish" + message);
-//        rabbitTemplate.setReturnCallback(new RabbitTemplate.ReturnCallback() {
-//            @Override
-//            public void returnedMessage(Message message, int i, String s, String s1, String s2) {
-//                logger.info("returnedMessage" + message);
-//            }
-//        });
-
- //       rabbitTemplate.convertAndSend(RabbitConfig.TOPIC_EXCHANGE, "BIND_KEY", "test");
-        rabbitTemplate.convertAndSend("exchange-test","rountingKey-test",message);
-//        rabbitTemplate.convertAndSend("exchange-test","rountingKey-test",message, new MessagePostProcessor() {
-//            @Override
-//            public Message postProcessMessage(Message message) throws AmqpException {
-//                MessageProperties properties = message.getMessageProperties();
-//                properties.setDeliveryMode(MessageDeliveryMode.PERSISTENT);
-//                return message;
-//            }
-//        });
-
+        rabbitTemplate.convertAndSend("exchange-test","123",message);
     }
 }
